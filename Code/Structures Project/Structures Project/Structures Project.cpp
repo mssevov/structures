@@ -40,9 +40,11 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 
 void registerFlight(FLIGHT flight[], int& flightCounter);
 
-void registrationClient(CLIENT client[], int& clientCounter); //registration CLIENT
+void registrationClient(CLIENT client[], int& clientCounter); //registration Client
 
 void informationClient(CLIENT client[], int& clientCounter); //information Client
+
+void removeClient(CLIENT client[], int& clientCounter); //Remove Client
 
 // Main
 int main()
@@ -66,21 +68,15 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 
     cout << "\n0. Quit application...\n";
 
-    cout << "\n-----/ Planes \\-----\n";
-    cout << "1. Register a new Plane...\n";
-    cout << "2. See Plane information...\n";
-    cout << "3. Remove a Plane...\n";
-
     cout << "\n-----/ Flight \\-----\n";
-    cout << "4. Register a new Flight...\n";
-    cout << "5. See Flight information...\n";
-    cout << "6. Remove a Flight...\n";
+    cout << "1. Register a new Flight...\n";
+    cout << "2. See Flight information...\n";
+    cout << "3. Remove a Flight...\n";
 
     cout << "\n-----/ Client \\-----\n";
-    cout << "7. Register a new Client...\n";
-    cout << "8. See Client information...\n";
-    cout << "9. Remove a Client...\n";
-
+    cout << "4. Register a new Client...\n";
+    cout << "5. See Client information...\n";
+    cout << "6. Remove a Client...\n";
 
     switch (_getch())
     {
@@ -103,7 +99,7 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
         informationClient(client, clientCounter);//function
         break;
     case 54: //6 -> remove a client
-        //function
+        removeClient(client, clientCounter);//function
         break;
     default:
         cout << "Error...";
@@ -123,7 +119,7 @@ void registrationClient(CLIENT client[], int& clientCounter) //registration clie
     cout << "Age: ";
     cin >> client[clientCounter].age;
     cout << "ID: ";
-    cin >> client[clientCounter].id; //bug!!! replace twice
+    cin >> client[clientCounter].id; //bug!!! replace twice when element than 10
     cout << "EGN: ";
     cin >> client[clientCounter].egn;
     cout << "Board pass\n";
@@ -140,15 +136,52 @@ void informationClient(CLIENT client[], int& clientCounter) //information Client
     system("CLS");
     for (int i = 0; i < clientCounter; i++)
     {
-        cout << "Name: "<< client[i].name.first<<" "<< client[i].name.middle<<" "<< client[i].name.last;
+        cout << "id:" << i;
+        cout << "\nName: "<< client[i].name.first<<" "<< client[i].name.middle<<" "<< client[i].name.last;
         cout << "\nAge: " << client[i].age;
-        cout << "\nID: " << client[i].id; //bug!!! replace twice
+        cout << "\nID: " << client[i].id; //bug!!! replace twice when element than 10
         cout << "\nEGN: " << client[i].egn;
         cout << "\nBoard pass\n";
         cout << "Flight Num: " << client[i].bp.flightNum;
         cout << "\nTaken Seats: " << client[i].bp.takenSeats << "\n";
         cout << "\n";
 
+    }
+    system("PAUSE");
+}
+
+void removeClient(CLIENT client[], int& clientCounter) //Remove Client Functions
+{
+    
+    system("CLS");
+    int index;
+    cout << "Choose id: ";
+    cin >> index;
+    if (index > clientCounter ) //checking index in range of client counter 
+    {
+        cout << "Error";
+    }
+    else 
+    {
+        for (int i = index; i < clientCounter-1; i++)
+        {
+            client[i] = client[i + 1];
+        }
+        clientCounter--;
+        
+        for (int i = 0; i < clientCounter; i++) //couting new list of clients
+        {
+            cout << "id:" << i;
+            cout << "\nName: " << client[i].name.first << " " << client[i].name.middle << " " << client[i].name.last;
+            cout << "\nAge: " << client[i].age;
+            cout << "\nID: " << client[i].id; //bug!!! replace twice when element than 10
+            cout << "\nEGN: " << client[i].egn;
+            cout << "\nBoard pass\n";
+            cout << "Flight Num: " << client[i].bp.flightNum;
+            cout << "\nTaken Seats: " << client[i].bp.takenSeats << "\n";
+            cout << "\n";
+
+        }
     }
     system("PAUSE");
 }
