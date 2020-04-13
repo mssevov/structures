@@ -59,34 +59,35 @@ struct FLIGHT {
 };
 
 // Functions
-void mainMenu(bool &inMainLoop);
+void mainMenu(bool& inMainLoop, CLIENT client[], int& clientCounter); //mainMenu
+void registrationC(CLIENT client[], int& clientCounter); //registration CLIENT
 
 // Main
 int main()
 {
-
+    int clientCounter = 0;
     struct CLIENT client[20];
     struct FLIGHT flight[20];
     bool inMainLoop = true;
     while (inMainLoop)
     {
-        mainMenu(inMainLoop);
+        mainMenu(inMainLoop, client, clientCounter);
     }
 }
 
 // Functions
-void mainMenu(bool &inMainLoop)
+void mainMenu(bool& inMainLoop, CLIENT client[], int& clientCounter)
 {
     system("CLS");
     cout << "===========| Main Menu |===========\n";
-    
+
     cout << "\n0. Quit application...\n";
 
     cout << "\n-----/ Planes \\-----\n";
     cout << "1. Register a new Plane...\n";
     cout << "2. See Plane information...\n";
     cout << "3. Remove a Plane...\n";
-    
+
     cout << "\n-----/ Flight \\-----\n";
     cout << "4. Register a new Flight...\n";
     cout << "5. See Flight information...\n";
@@ -121,18 +122,38 @@ void mainMenu(bool &inMainLoop)
     case 54: //6 -> remove a flight
         //function
         break;
-    case 55: //4 -> register a new client
+    case 55: //7 -> register a new client
+        registrationC(client, clientCounter); //function
+        break;
+    case 56: //8 -> see client information
         //function
         break;
-    case 56: //5 -> see client information
-        //function
-        break;
-    case 57: //6 -> remove a client
+    case 57: //9 -> remove a client
         //function
         break;
     default:
         cout << "Error...";
         break;
     }
-
+}
+void registrationC(CLIENT client[], int& clientCounter) //registration client Functions
+{
+    system("CLS");
+    cout << "First name: ";
+    cin >> client[clientCounter].name.first;
+    cout << "Middle name: ";
+    cin >> client[clientCounter].name.middle;
+    cout << "Last name: ";
+    cin >> client[clientCounter].name.last;
+    cout << "Age: ";
+    cin >> client[clientCounter].age;
+    cout << "ID: ";
+    cin >> client[clientCounter].id;
+    cout << "EGN: ";
+    cin >> client[clientCounter].egn;
+    cout << "Board pass\n";
+    cout << "Flight Num: ";
+    cin >> client[clientCounter].bp.flightNum;
+    cout << "Taken Seats: ";
+    cin >> client[clientCounter].bp.takenSeats;
 }
