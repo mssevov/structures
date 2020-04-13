@@ -36,26 +36,30 @@ struct FLIGHT {
 };
 
 // Functions
-void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter);
+void mainMenu(bool& inMainLoop, CLIENT client[], int& clientCounter); //mainMenu
 
 void registerFlight(FLIGHT flight[], int& flightCounter);
+
+void registrationClient(CLIENT client[], int& clientCounter); //registration CLIENT
+
+void informationClient(CLIENT client[], int& clientCounter); //information Client
 
 // Main
 int main()
 {
-
+    int clientCounter = 0;
     struct CLIENT client[20];
     int flightCounter = 0;
     struct FLIGHT flight[20];
     bool inMainLoop = true;
     while (inMainLoop)
     {
-        mainMenu(inMainLoop, flight, flightCounter);
+        mainMenu(inMainLoop, flight, flightCounter, client, clientCounter);
     }
 }
 
 // Functions
-void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter)
+void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT client[], int& clientCounter)
 {
     system("CLS");
     cout << "===========| Main Menu |===========\n";
@@ -93,10 +97,10 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter)
         //function
         break;
     case 52: //4 -> register a new client
-        //function
+        registrationClient(client, clientCounter);//function
         break;
     case 53: //5 -> see client information
-        //function
+        informationClient(client, clientCounter);//function
         break;
     case 54: //6 -> remove a client
         //function
@@ -105,7 +109,48 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter)
         cout << "Error...";
         break;
     }
+}
 
+void registrationClient(CLIENT client[], int& clientCounter) //registration client Functions
+{
+    system("CLS");
+    cout << "First name: ";
+    cin >> client[clientCounter].name.first;
+    cout << "Middle name: ";
+    cin >> client[clientCounter].name.middle;
+    cout << "Last name: ";
+    cin >> client[clientCounter].name.last;
+    cout << "Age: ";
+    cin >> client[clientCounter].age;
+    cout << "ID: ";
+    cin >> client[clientCounter].id; //bug!!! replace twice
+    cout << "EGN: ";
+    cin >> client[clientCounter].egn;
+    cout << "Board pass\n";
+    cout << "Flight Num: ";
+    cin >> client[clientCounter].bp.flightNum;
+    cout << "Taken Seats: ";
+    cin >> client[clientCounter].bp.takenSeats;
+
+    clientCounter++;
+}
+
+void informationClient(CLIENT client[], int& clientCounter) //information Client Functions
+{
+    system("CLS");
+    for (int i = 0; i < clientCounter; i++)
+    {
+        cout << "Name: "<< client[i].name.first<<" "<< client[i].name.middle<<" "<< client[i].name.last;
+        cout << "\nAge: " << client[i].age;
+        cout << "\nID: " << client[i].id; //bug!!! replace twice
+        cout << "\nEGN: " << client[i].egn;
+        cout << "\nBoard pass\n";
+        cout << "Flight Num: " << client[i].bp.flightNum;
+        cout << "\nTaken Seats: " << client[i].bp.takenSeats << "\n";
+        cout << "\n";
+
+    }
+    system("PAUSE");
 }
 
 void registerFlight(FLIGHT flight[], int& flightCounter)
