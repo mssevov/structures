@@ -60,7 +60,8 @@ struct FLIGHT {
 
 // Functions
 void mainMenu(bool& inMainLoop, CLIENT client[], int& clientCounter); //mainMenu
-void registrationC(CLIENT client[], int& clientCounter); //registration CLIENT
+void registrationClient(CLIENT client[], int& clientCounter); //registration CLIENT
+void informationClient(CLIENT client[], int& clientCounter); //information Client
 
 // Main
 int main()
@@ -123,10 +124,10 @@ void mainMenu(bool& inMainLoop, CLIENT client[], int& clientCounter)
         //function
         break;
     case 55: //7 -> register a new client
-        registrationC(client, clientCounter); //function
+        registrationClient(client, clientCounter); //function
         break;
     case 56: //8 -> see client information
-        //function
+        informationClient(client, clientCounter);//function
         break;
     case 57: //9 -> remove a client
         //function
@@ -136,7 +137,7 @@ void mainMenu(bool& inMainLoop, CLIENT client[], int& clientCounter)
         break;
     }
 }
-void registrationC(CLIENT client[], int& clientCounter) //registration client Functions
+void registrationClient(CLIENT client[], int& clientCounter) //registration client Functions
 {
     system("CLS");
     cout << "First name: ";
@@ -148,7 +149,7 @@ void registrationC(CLIENT client[], int& clientCounter) //registration client Fu
     cout << "Age: ";
     cin >> client[clientCounter].age;
     cout << "ID: ";
-    cin >> client[clientCounter].id;
+    cin >> client[clientCounter].id; //bug!!! replace twice
     cout << "EGN: ";
     cin >> client[clientCounter].egn;
     cout << "Board pass\n";
@@ -156,4 +157,24 @@ void registrationC(CLIENT client[], int& clientCounter) //registration client Fu
     cin >> client[clientCounter].bp.flightNum;
     cout << "Taken Seats: ";
     cin >> client[clientCounter].bp.takenSeats;
+
+    clientCounter++;
 }
+void informationClient(CLIENT client[], int& clientCounter) //information Client Functions
+{
+    system("CLS");
+    for (int i = 0; i < clientCounter; i++)
+    {
+        cout << "Name: "<< client[i].name.first<<" "<< client[i].name.middle<<" "<< client[i].name.last;
+        cout << "\nAge: " << client[i].age;
+        cout << "\nID: " << client[i].id; //bug!!! replace twice
+        cout << "\nEGN: " << client[i].egn;
+        cout << "\nBoard pass\n";
+        cout << "Flight Num: " << client[i].bp.flightNum;
+        cout << "\nTaken Seats: " << client[i].bp.takenSeats << "\n";
+        cout << "\n";
+
+    }
+    system("PAUSE");
+}
+
