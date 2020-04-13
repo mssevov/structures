@@ -36,7 +36,7 @@ struct FLIGHT {
 };
 
 // Functions
-void mainMenu(bool& inMainLoop, CLIENT client[], int& clientCounter); //mainMenu
+void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT client[], int& clientCounter); //mainMenu
 
 void registerFlight(FLIGHT flight[], int& flightCounter);
 
