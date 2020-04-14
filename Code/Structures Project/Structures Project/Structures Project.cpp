@@ -27,26 +27,9 @@ struct PLANES {
     int maxSeats;
 };
 
-enum MONTHS {
-    January = 1,
-    February = 2,
-    March = 3,
-    April = 4,
-    May = 5,
-    June = 6,
-    July = 7,
-    August = 8,
-    September = 9,
-    October = 10,
-    November = 11,
-    December = 12
-};
-
 struct TAKE_OFF_TIME {
-    enum MONTHS month;
+    int month;
     int day;
-    int hour;
-    int minutes;
 };
 
 struct FLIGHT {
@@ -54,6 +37,7 @@ struct FLIGHT {
     string origin, destination;
     float distanceToDestination;
     struct PLANES plane;
+    TAKE_OFF_TIME timeOfTakeOff;
 };
 
 // Functions
@@ -61,11 +45,17 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 
 void registerFlight(FLIGHT flight[], int& flightCounter);
 
+void informationFlight(FLIGHT flight[], int& flightCounter);
+
 void registrationClient(CLIENT client[], int& clientCounter); //registration Client
 
 void informationClient(CLIENT client[], int& clientCounter); //information Client
 
 void removeClient(CLIENT client[], int& clientCounter); //Remove Client
+
+void checkMonth(FLIGHT flight[], int i); //Checks if the month is possible
+
+void checkDay(FLIGHT flight[], int i); //Checks if the day is possible
 
 // Main
 int main()
@@ -108,7 +98,7 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
         registerFlight(flight, flightCounter); //function
         break;
     case 50: //2 -> see flight information
-        //function
+        informationFlight(flight, flightCounter);//function
         break;
     case 51: //3 -> remove a flight
         //function
@@ -126,6 +116,7 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
         cout << "Error...";
         break;
     }
+
 }
 
 void registrationClient(CLIENT client[], int& clientCounter) //registration client Function
@@ -170,14 +161,15 @@ void informationClient(CLIENT client[], int& clientCounter) //information Client
 
 void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
 {
-    
+    removeStart:
     system("CLS");
     int index;
     cout << "Choose id: ";
     cin >> index;
-    if (index > clientCounter ) //checking index in range of client counter 
+    if (index > clientCounter or index < 0) //checking index in range of client counter 
     {
         cout << "Error...\n";
+        goto removeStart;
     }
     else 
     {
@@ -192,7 +184,6 @@ void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
             cout << "id:" << i;
             cout << "\nName: " << client[i].name.first << " " << client[i].name.middle << " " << client[i].name.last;
             cout << "\nAge: " << client[i].age;
-            cout << "\nID: " << client[i].id; //bug!!! replace twice when element than 10
             cout << "\nEGN: " << client[i].egn;
             cout << "\nBoard pass\n";
             cout << "Flight Num: " << client[i].bp.flightNum;
@@ -204,7 +195,7 @@ void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
     system("PAUSE");
 }
 
-void registerFlight(FLIGHT flight[], int& flightCounter)
+void registerFlight(FLIGHT flight[], int& flightCounter) //Register a new flight
 {
     system("CLS");
 
@@ -212,10 +203,71 @@ void registerFlight(FLIGHT flight[], int& flightCounter)
     cout << "Country/City of origin: "; cin >> flight[flightCounter].origin;
     cout << "Destination: "; cin >> flight[flightCounter].destination;
     cout << "Travel Distance(km): "; cin >> flight[flightCounter].distanceToDestination;
+    int month;
+    cout << "Take off date(26.8): "; cin >> flight[flightCounter].timeOfTakeOff.day >> flight[flightCounter].timeOfTakeOff.month;
+    checkMonth(flight, flightCounter);
+    checkDay(flight, flightCounter);
     cout << "Plane: ";
-    cout << "\n----Manufacturer: "; cin >> flight[flightCounter].plane.manufacturer;
-    cout << "----Model name: "; cin >> flight[flightCounter].plane.modelName;
-    cout << "----Max seats: "; cin >> flight[flightCounter].plane.maxSeats;
-
+    cout << "\n-  -Manufacturer: "; cin >> flight[flightCounter].plane.manufacturer;
+    cout << "-  -Model name: "; cin >> flight[flightCounter].plane.modelName;
+    cout << "-  -Max seats: "; cin >> flight[flightCounter].plane.maxSeats;
     flightCounter++;
+}
+
+void checkMonth(FLIGHT flight[], int i) //Checks if the month is possible
+{
+    if (flight[i].timeOfTakeOff.month < 0 or flight[i].timeOfTakeOff.month > 12)
+    {
+        cout << "\tMonth not possible... Enter a new Month: "; cin >> flight[i].timeOfTakeOff.month;
+        checkMonth(flight, i);
+    }
+
+}
+
+void checkDay(FLIGHT flight[], int i) //Checks if the day is possible
+{
+    int maxDays;
+    switch (flight[i].timeOfTakeOff.month)
+    {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+        maxDays = 31;
+        break;
+    case 2:
+        maxDays = 28;
+    default:
+        maxDays = 30;
+        break;
+    }
+
+    if (flight[i].timeOfTakeOff.day < 0 or flight[i].timeOfTakeOff.day > maxDays)
+    {
+        cout << "\tDay not possible... Enter a new day: "; cin >> flight[i].timeOfTakeOff.day;
+        checkDay(flight, i);
+    }
+
+}
+
+void informationFlight(FLIGHT flight[], int& flightCounter)
+{
+    system("CLS");
+    for (int i = 0; i < flightCounter; i++)
+    {
+        cout << "Flight Number(6 symbols): " << flight[i].flightNum;
+        cout << "\nCountry/City of origin: " << flight[i].origin;
+        cout << "\nDestination: " << flight[i].destination;
+        cout << "\nTravel Distance(km): " << flight[i].distanceToDestination;
+        cout << "\nTake off date(day.month): " << flight[i].timeOfTakeOff.day << "."; if (flight[i].timeOfTakeOff.month < 10) cout << "0"; cout << flight[i].timeOfTakeOff.month;
+        cout << "\nPlane: ";
+        cout << "\n-  -Manufacturer: " << flight[i].plane.manufacturer;
+        cout << "\n-  -Model name: " << flight[i].plane.modelName;
+        cout << "\n-  -Max seats: " << flight[i].plane.maxSeats;
+
+    }
+    system("PAUSE");
 }
