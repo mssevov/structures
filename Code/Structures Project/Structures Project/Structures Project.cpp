@@ -99,6 +99,12 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
     cout << "5. See Client information...\n";
     cout << "6. Remove a Client...\n";
 
+    cout << "\n-----/ Edit \\-----\n";
+
+    cout << "7. Edit client info...\n";
+    cout << "8. Edit Flight info...\n";
+
+
     switch (_getch())
     {
     case 48: //0 -> quit app
@@ -121,6 +127,33 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
         break;
     case 54: //6 -> remove a client
         removeClient(client, clientCounter);//function
+        break;
+    case 55: //7 -> edit client
+        system("CLS");
+        cout << "===========| Edit Menu Client |===========\n";
+
+        cout << "\n0 Back to the Main Menu...\n";
+
+        
+
+        switch (_getch()) //second menu
+        {
+        case 48: //0 -> back to the Main Menu
+            break;
+        }
+        break;
+
+    case 56: //8 -> edit Flight
+        system("CLS");
+        cout << "===========| Edit Menu Flight |===========\n";
+
+        cout << "\n0 Back to the Main Menu...\n";
+
+        switch (_getch()) //second menu
+        {
+        case 48: //0 -> back to the Main Menu
+            break;
+        }
         break;
     default:
         cout << "Error...";
@@ -192,7 +225,6 @@ void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
             cout << "id:" << i;
             cout << "\nName: " << client[i].name.first << " " << client[i].name.middle << " " << client[i].name.last;
             cout << "\nAge: " << client[i].age;
-            cout << "\nID: " << client[i].id; //bug!!! replace twice when element than 10
             cout << "\nEGN: " << client[i].egn;
             cout << "\nBoard pass\n";
             cout << "Flight Num: " << client[i].bp.flightNum;
