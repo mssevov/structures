@@ -61,11 +61,15 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 
 void registerFlight(FLIGHT flight[], int& flightCounter);
 
+void editFlight(FLIGHT flight[], int& flightCounter);
+
 void registrationClient(CLIENT client[], int& clientCounter); //registration Client
 
 void informationClient(CLIENT client[], int& clientCounter); //information Client
 
 void removeClient(CLIENT client[], int& clientCounter); //Remove Client
+
+void editClient(CLIENT client[], int& clientCounter); //Edit Client 
 
 // Main
 int main()
@@ -129,31 +133,10 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
         removeClient(client, clientCounter);//function
         break;
     case 55: //7 -> edit client
-        system("CLS");
-        cout << "===========| Edit Menu Client |===========\n";
-
-        cout << "\n0 Back to the Main Menu...\n";
-
-        
-
-        switch (_getch()) //second menu
-        {
-        case 48: //0 -> back to the Main Menu
-            break;
-        }
+        editClient(client, clientCounter);//function
         break;
-
     case 56: //8 -> edit Flight
-        system("CLS");
-        cout << "===========| Edit Menu Flight |===========\n";
-
-        cout << "\n0 Back to the Main Menu...\n";
-
-        switch (_getch()) //second menu
-        {
-        case 48: //0 -> back to the Main Menu
-            break;
-        }
+        editFlight(flight, flightCounter);//function
         break;
     default:
         cout << "Error...";
@@ -208,7 +191,7 @@ void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
     int index;
     cout << "Choose id: ";
     cin >> index;
-    if (index > clientCounter ) //checking index in range of client counter 
+    if (index > clientCounter or index < 0) //checking index in range of client counter 
     {
         cout << "Error...\n";
     }
@@ -236,6 +219,85 @@ void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
     system("PAUSE");
 }
 
+void editClient(CLIENT client[], int& clientCounter)
+{
+    system("CLS");
+    int index;
+    struct CLIENT temp;
+    cout << "===========| Edit Menu Client |===========\n";
+
+    cout << "\n0 Back to the Main Menu...\n";
+
+    cout << "\n1.Edit Name...\n";
+    cout << "2.Edit age...\n";
+    cout << "3.Edit EGN...\n";
+    cout << "4.Edit flight num...\n";
+    cout << "5.Edit taken seats...\n";
+
+    switch (_getch()) //second menu
+    {
+    case 48: //0 -> back to the Main Menu
+        break;
+    case 49: //1 -> edit name
+        cout << "\nchoose ID: ";
+        cin >> index;
+        if (index > clientCounter or index < 0)
+        {
+            cout << "\nError...\n";
+            system("PAUSE");
+        }
+        else 
+        {
+            cout << "Old name: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last << "\n";
+            cout << "New name: ";
+            cin >> temp.name.first;
+            cin >> temp.name.middle;
+            cin >> temp.name.last;
+            cout << "\n1.Save new name\n";
+            cout << "2.Cancel the new name\n";
+            switch (_getch()) // save the new name
+            {
+            case 49: //1 -> save new name
+                client[index].name.first = temp.name.first; //change old name with new name
+                client[index].name.middle = temp.name.middle;
+                client[index].name.last = temp.name.last;
+
+                cout << "\nid:" << index; //couting all information of client
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            case 50: //2 -> Cancel the new name
+                cout << "\nNew name is cancel.\n";
+                cout << "\nid:" << index; //couting all information of client
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            }
+        }
+        break;
+    case 50: //2 -> edit age
+        break;
+    case 51: //3 -> edit EGN
+        break;
+    case 52: //4 -> edit flight num
+        break;
+    case 53: //5 -> edit taken seats
+        break;
+    }
+}
+
 void registerFlight(FLIGHT flight[], int& flightCounter)
 {
     system("CLS");
@@ -250,4 +312,20 @@ void registerFlight(FLIGHT flight[], int& flightCounter)
     cout << "----Max seats: "; cin >> flight[flightCounter].plane.maxSeats;
 
     flightCounter++;
+}
+
+void editFlight(FLIGHT flight[], int& flightCounter) 
+{
+    int index;
+    struct CLIENT temp;
+    system("CLS");
+    cout << "===========| Edit Menu Flight |===========\n";
+
+    cout << "\n0 Back to the Main Menu...\n";
+
+    switch (_getch()) //second menu
+    {
+    case 48: //0 -> back to the Main Menu
+        break;
+    }
 }
