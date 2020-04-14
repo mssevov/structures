@@ -107,7 +107,7 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
     }
 }
 
-void registrationClient(CLIENT client[], int& clientCounter) //registration client Functions
+void registrationClient(CLIENT client[], int& clientCounter) //registration client Function
 {
     system("CLS");
     cout << "First name: ";
@@ -131,7 +131,7 @@ void registrationClient(CLIENT client[], int& clientCounter) //registration clie
     clientCounter++;
 }
 
-void informationClient(CLIENT client[], int& clientCounter) //information Client Functions
+void informationClient(CLIENT client[], int& clientCounter) //information Client Function
 {
     system("CLS");
     for (int i = 0; i < clientCounter; i++)
@@ -150,7 +150,7 @@ void informationClient(CLIENT client[], int& clientCounter) //information Client
     system("PAUSE");
 }
 
-void removeClient(CLIENT client[], int& clientCounter) //Remove Client Functions
+void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
 {
     
     system("CLS");
@@ -159,11 +159,11 @@ void removeClient(CLIENT client[], int& clientCounter) //Remove Client Functions
     cin >> index;
     if (index > clientCounter ) //checking index in range of client counter 
     {
-        cout << "Error";
+        cout << "Error...\n";
     }
     else 
     {
-        for (int i = index; i < clientCounter-1; i++)
+        for (int i = index; i < clientCounter-1; i++) //delete index registration client
         {
             client[i] = client[i + 1];
         }
