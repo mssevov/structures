@@ -17,7 +17,6 @@ struct BOARD_PASS {
 struct CLIENT {
     struct NAME name;
     int age;
-    char id[10];
     char egn[11];
     struct BOARD_PASS bp;
 };
@@ -26,6 +25,28 @@ struct PLANES {
     string manufacturer;
     string modelName;
     int maxSeats;
+};
+
+enum MONTHS {
+    January = 1,
+    February = 2,
+    March = 3,
+    April = 4,
+    May = 5,
+    June = 6,
+    July = 7,
+    August = 8,
+    September = 9,
+    October = 10,
+    November = 11,
+    December = 12
+};
+
+struct TAKE_OFF_TIME {
+    enum MONTHS month;
+    int day;
+    int hour;
+    int minutes;
 };
 
 struct FLIGHT {
@@ -118,8 +139,6 @@ void registrationClient(CLIENT client[], int& clientCounter) //registration clie
     cin >> client[clientCounter].name.last;
     cout << "Age: ";
     cin >> client[clientCounter].age;
-    cout << "ID: ";
-    cin >> client[clientCounter].id; //bug!!! replace twice when element than 10
     cout << "EGN: ";
     cin >> client[clientCounter].egn;
     cout << "Board pass\n";
@@ -127,7 +146,7 @@ void registrationClient(CLIENT client[], int& clientCounter) //registration clie
     cin >> client[clientCounter].bp.flightNum;
     cout << "Taken Seats: ";
     cin >> client[clientCounter].bp.takenSeats;
-
+    
     clientCounter++;
 }
 
@@ -139,7 +158,6 @@ void informationClient(CLIENT client[], int& clientCounter) //information Client
         cout << "id:" << i;
         cout << "\nName: "<< client[i].name.first<<" "<< client[i].name.middle<<" "<< client[i].name.last;
         cout << "\nAge: " << client[i].age;
-        cout << "\nID: " << client[i].id; //bug!!! replace twice when element than 10
         cout << "\nEGN: " << client[i].egn;
         cout << "\nBoard pass\n";
         cout << "Flight Num: " << client[i].bp.flightNum;
