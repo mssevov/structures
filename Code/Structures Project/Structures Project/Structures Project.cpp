@@ -177,6 +177,7 @@ void informationClient(CLIENT client[], int& clientCounter) //information Client
 
 void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
 {
+    informationClient(client, clientCounter);
     removeStart:
     system("CLS");
     int index;
@@ -187,26 +188,24 @@ void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
         cout << "Error...\n";
         goto removeStart;
     }
-    else 
+    else
     {
-        for (int i = index; i < clientCounter-1; i++) //delete index registration client
+        cout << "id:" << index;
+        cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+        cout << "\nAge: " << client[index].age;
+        cout << "\nEGN: " << client[index].egn;
+        cout << "\nBoard pass\n";
+        cout << "Flight Num: " << client[index].bp.flightNum;
+        cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+        cout << "\n";
+
+
+        for (int i = index; i < clientCounter - 1; i++) //delete index registration client
         {
             client[i] = client[i + 1];
         }
         clientCounter--;
-        
-        for (int i = 0; i < clientCounter; i++) //couting new list of clients
-        {
-            cout << "id:" << i;
-            cout << "\nName: " << client[i].name.first << " " << client[i].name.middle << " " << client[i].name.last;
-            cout << "\nAge: " << client[i].age;
-            cout << "\nEGN: " << client[i].egn;
-            cout << "\nBoard pass\n";
-            cout << "Flight Num: " << client[i].bp.flightNum;
-            cout << "\nTaken Seats: " << client[i].bp.takenSeats << "\n";
-            cout << "\n";
 
-        }
     }
     system("PAUSE");
 }
@@ -365,6 +364,7 @@ void informationFlight(FLIGHT flight[], int& flightCounter)
 
     }
     system("PAUSE");
+}
 
 void editFlight(FLIGHT flight[], int& flightCounter) 
 {
