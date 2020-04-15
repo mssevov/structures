@@ -43,11 +43,11 @@ struct FLIGHT {
 // Functions
 void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT client[], int& clientCounter); //mainMenu
 
-void registerFlight(FLIGHT flight[], int& flightCounter);
+void registerFlight(FLIGHT flight[], int& flightCounter); //registration Flight
 
-void informationFlight(FLIGHT flight[], int& flightCounter);
+void informationFlight(FLIGHT flight[], int& flightCounter); //information Flight
 
-void editFlight(FLIGHT flight[], int& flightCounter);
+void editFlight(FLIGHT flight[], int& flightCounter); //Edit Flight 
 
 void registrationClient(CLIENT client[], int& clientCounter); //registration Client
 
@@ -149,7 +149,7 @@ void registrationClient(CLIENT client[], int& clientCounter) //registration clie
     cout << "EGN: ";
     cin >> client[clientCounter].egn;
     cout << "Board pass\n";
-    cout << "Flight Num: ";
+    cout << "Flight Num(6 symbols): ";
     cin >> client[clientCounter].bp.flightNum;
     cout << "Taken Seats: ";
     cin >> client[clientCounter].bp.takenSeats;
@@ -246,14 +246,14 @@ void editClient(CLIENT client[], int& clientCounter)
             cin >> temp.name.last;
             cout << "\n1.Save new name\n";
             cout << "2.Cancel the new name\n";
-            switch (_getch()) // save the new name
+            switch (_getch()) // save or cancel the new name
             {
             case 49: //1 -> save new name
                 client[index].name.first = temp.name.first; //change old name with new name
                 client[index].name.middle = temp.name.middle;
                 client[index].name.last = temp.name.last;
 
-                cout << "\nid:" << index; //couting all information of client
+                cout << "\nid:" << index; //couting all information of client with new name
                 cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
                 cout << "\nAge: " << client[index].age;
                 cout << "\nEGN: " << client[index].egn;
@@ -279,12 +279,180 @@ void editClient(CLIENT client[], int& clientCounter)
         }
         break;
     case 50: //2 -> edit age
+        cout << "\nchoose ID: ";
+        cin >> index;
+        if (index > clientCounter or index < 0)
+        {
+            cout << "\nError...\n";
+            system("PAUSE");
+        }
+        else
+        {
+            cout << "Old age: " << client[index].age << "\n";
+            cout << "New age: ";
+            cin >> temp.age;
+            cout << "\n1.Save new age\n";
+            cout << "2.Cancel the new age\n";
+            switch (_getch()) // save or cancel the new age
+            {
+            case 49: //1 -> save new age
+                client[index].age = temp.age; //change old age with new age
+                cout << "\nid:" << index; //couting all information of client with new age
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            case 50: //2 -> Cancel the new age
+                cout << "\nNew age is cancel.\n";
+                cout << "\nid:" << index; //couting all information of client
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            }
+        }
         break;
     case 51: //3 -> edit EGN
+        cout << "\nchoose ID: ";
+        cin >> index;
+        if (index > clientCounter or index < 0)
+        {
+            cout << "\nError...\n";
+            system("PAUSE");
+        }
+        else
+        {
+            cout << "Old EGN: " << client[index].egn << "\n";
+            cout << "New EGN: ";
+            cin >> temp.egn;
+            cout << "\n1.Save new EGN\n";
+            cout << "2.Cancel the new EGN\n";
+            switch (_getch()) // save or cancel the new EGN
+            {
+            case 49: //1 -> save new EGN
+                swap(client[index].egn, temp.egn); //change old EGN with new EGN
+                cout << "\nid:" << index; //couting all information of client with new EGN
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            case 50: //2 -> Cancel the new EGN
+                cout << "\nNew EGN is cancel.\n";
+                cout << "\nid:" << index; //couting all information of client
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            }
+        }
         break;
     case 52: //4 -> edit flight num
+        cout << "\nchoose ID: ";
+        cin >> index;
+        if (index > clientCounter or index < 0)
+        {
+            cout << "\nError...\n";
+            system("PAUSE");
+        }
+        else
+        {
+            cout << "Old flight num: " << client[index].bp.flightNum << "\n";
+            cout << "New flight num: ";
+            cin >> temp.bp.flightNum;
+            cout << "\n1.Save new flight num\n";
+            cout << "2.Cancel the new flight num\n";
+            switch (_getch()) // save or cancel the new flight num
+            {
+            case 49: //1 -> save new flight num
+                swap(client[index].bp.flightNum, temp.bp.flightNum); //change old flight num with new flight num
+                cout << "\nid:" << index; //couting all information of client with new flight num
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            case 50: //2 -> Cancel the new flight num
+                cout << "\nNew flight num is cancel.\n";
+                cout << "\nid:" << index; //couting all information of client
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            }
+        }
         break;
     case 53: //5 -> edit taken seats
+        cout << "\nchoose ID: ";
+        cin >> index;
+        if (index > clientCounter or index < 0)
+        {
+            cout << "\nError...\n";
+            system("PAUSE");
+        }
+        else
+        {
+            cout << "Old taken seats: " << client[index].bp.takenSeats << "\n";
+            cout << "New taken seats: ";
+            cin >> temp.bp.takenSeats;
+            cout << "\n1.Save new taken seats\n";
+            cout << "2.Cancel the new taken seats\n";
+            switch (_getch()) // save or cancel the new taken seats
+            {
+            case 49: //1 -> save new taken seats
+                client[index].bp.takenSeats = temp.bp.takenSeats; //change old taken seats with new taken seats
+                cout << "\nid:" << index; //couting all information of client with new taken seats
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            case 50: //2 -> Cancel the new taken seats
+                cout << "\nNew taken seats is cancel.\n";
+                cout << "\nid:" << index; //couting all information of client
+                cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
+                cout << "\nAge: " << client[index].age;
+                cout << "\nEGN: " << client[index].egn;
+                cout << "\nBoard pass\n";
+                cout << "Flight Num: " << client[index].bp.flightNum;
+                cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
+                cout << "\n";
+                system("PAUSE");
+                break;
+            }
+        }
         break;
     }
 }
