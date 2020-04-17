@@ -12,6 +12,8 @@ struct NAME {
 struct BOARD_PASS {
 	char flightNum[6];
 	int takenSeats;
+	int ticketNum;
+	bool checkedIn = false;
 };
 
 struct CLIENT {
@@ -39,12 +41,15 @@ struct FLIGHT {
 	struct PLANES plane;
 	TAKE_OFF_DATE dateOfTakeOff;
 	int emptySeats;
+	bool overbooked = false;
+	int passengers = 0;
+	int passengersTickets[30];
 };
 
 // Functions
 void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT client[], int& clientCounter); //mainMenu
 
-void registerFlight(FLIGHT flight[], int& flightCounter); //registration Flight
+void registerFlight(FLIGHT flight[], int& flightCounter); //register Flight
 
 void informationFlight(FLIGHT flight[], int& flightCounter); //information Flight
 
@@ -52,7 +57,7 @@ void editFlight(FLIGHT flight[], int& flightCounter); //Edit Flight
 
 void removeFlight(FLIGHT flight[], int& flightCounter); //Remove Flight 
 
-void registrationClient(CLIENT client[], int& clientCounter); //registration Client
+void registerClient(CLIENT client[], int& clientCounter); //register Client
 
 void informationClient(CLIENT client[], int& clientCounter); //information Client
 
@@ -63,6 +68,10 @@ void editClient(CLIENT client[], int& clientCounter); //Edit Client
 void checkMonth(FLIGHT flight[], int i); //Checks if the month is possible
 
 void checkDay(FLIGHT flight[], int i); //Checks if the day is possible
+
+void connectFlightClient(FLIGHT flight[], int flightCounter, CLIENT client[], int clientCounter); //Connects Flights and Clients and checks seats
+
+void informationPassenger(FLIGHT flight[], int flightCounter, CLIENT client[], int clientCounter); //information passengers-clients
 
 // Main
 int main()
@@ -109,16 +118,19 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 		break;
 	case 49: //1 -> register a new flight
 		registerFlight(flight, flightCounter); //function
+		connectFlightClient(flight, flightCounter, client, clientCounter);
 		break;
 	case 50: //2 -> see flight information
 		informationFlight(flight, flightCounter);//function
+		informationPassenger(flight, flightCounter, client, clientCounter);
 		break;
 	case 51: //3 -> remove a flight
 		removeFlight(flight, flightCounter);//function
 		break;
 	case 52: //4 -> register a new client
-		registrationClient(client, clientCounter);//function
-		//add function to check seats!
+		registerClient(client, clientCounter);//function
+		connectFlightClient(flight, flightCounter, client, clientCounter);
+		//function to check seats!
 		break;
 	case 53: //5 -> see client information
 		informationClient(client, clientCounter);//function
@@ -139,7 +151,7 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 
 }
 
-void registrationClient(CLIENT client[], int& clientCounter) //registration client Function
+void registerClient(CLIENT client[], int& clientCounter) //register client Function
 {
 	system("CLS");
 	cout << "First name: ";
@@ -157,7 +169,8 @@ void registrationClient(CLIENT client[], int& clientCounter) //registration clie
 	cin >> client[clientCounter].bp.flightNum;
 	cout << "Taken Seats: ";
 	cin >> client[clientCounter].bp.takenSeats;
-	
+	client[clientCounter].bp.ticketNum = clientCounter;
+
 	clientCounter++;
 }
 
@@ -212,7 +225,7 @@ void removeClient(CLIENT client[], int& clientCounter) //Remove Client Function
 		cout << "\n";
 
 
-		for (int i = index; i < clientCounter - 1; i++) //delete index registration client
+		for (int i = index; i < clientCounter - 1; i++) //delete index register client
 		{
 			client[i] = client[i + 1];
 		}
@@ -317,7 +330,7 @@ void editClient(CLIENT client[], int& clientCounter)
 			break;
 		}
 
-		cout << "\nNew Client Info:";
+		cout << "\nClient Info:";
 		cout << "\nid:" << index; //couting all information of client
 		cout << "\nName: " << client[index].name.first << " " << client[index].name.middle << " " << client[index].name.last;
 		cout << "\nAge: " << client[index].age;
@@ -337,7 +350,6 @@ void checkMonth(FLIGHT flight[], int i) //Checks if the month is possible
 		cout << "\tMonth not possible... Enter a new Month: "; cin >> flight[i].dateOfTakeOff.month;
 		checkMonth(flight, i);
 	}
-
 }
 
 void checkDay(FLIGHT flight[], int i) //Checks if the day is possible
@@ -409,7 +421,8 @@ void informationFlight(FLIGHT flight[], int& flightCounter)
 			cout << "\n-  -Manufacturer: " << flight[i].plane.manufacturer;
 			cout << "\n-  -Model name: " << flight[i].plane.modelName;
 			cout << "\n-  -Max seats: " << flight[i].plane.maxSeats;
-			cout << "\nEmpty seats: " << flight[i].emptySeats;
+			if (flight[i].emptySeats < 0) cout << "\nOverbooked!";
+			else cout << "\nEmpty seats: " << flight[i].emptySeats;
 			cout << "\n\n";
 
 		}
@@ -441,10 +454,11 @@ removeStart:
 		cout << "\n-  -Manufacturer: " << flight[index].plane.manufacturer;
 		cout << "\n-  -Model name: " << flight[index].plane.modelName;
 		cout << "\n-  -Max Seats: " << flight[index].plane.maxSeats;
-		cout << "\nEmpty seats: " << flight[index].emptySeats;
+		if (flight[index].emptySeats < 0) cout << "\nOverbooked!";
+		else cout << "\nEmpty seats: " << flight[index].emptySeats;
 
 
-		for (int i = index; i < flightCounter - 1; i++) //delete index registration flight
+		for (int i = index; i < flightCounter - 1; i++) //delete index register flight
 		{
 			flight[i] = flight[i + 1];
 		}
@@ -553,6 +567,7 @@ editFlightStart:
 
 
 		cout << "\nChanges have been saved.\n";
+		flight[index] = temp;
 		temp.dateOfTakeOff.day = flight[index].dateOfTakeOff.day;
 		temp.dateOfTakeOff.month = flight[index].dateOfTakeOff.month;
 		_getch();
@@ -578,4 +593,65 @@ editFlightStart:
 	cout << "\n\n";
 	_getch();
 	}
+}
+
+void connectFlightClient(FLIGHT flight[], int flightCounter, CLIENT client[], int clientCounter)
+{
+	for (int i = 0; i < flightCounter; i++)
+	{
+		for (int j = 0; j < clientCounter; j++)
+		{
+			if (client[j].bp.checkedIn == false)
+			{
+				bool check = true;
+				for (int k = 0; k < 6; k++)
+				{
+					if (int(client[j].bp.flightNum[k]) != int(flight[i].flightNum[k]))
+					{
+						check = false;
+					}
+				}
+				if (check == true)
+				{
+					flight[i].emptySeats -= client[j].bp.takenSeats;
+					if (flight[i].emptySeats < 0)
+					{
+						flight[i].overbooked = true;
+					}
+					flight[i].passengersTickets[flight[i].passengers] = client[j].bp.ticketNum;
+					flight[i].passengers++;
+				}
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+}
+
+void informationPassenger(FLIGHT flight[], int flightCounter, CLIENT client[], int clientCounter)
+{
+	cout << "\nPassengers: ";
+
+	for (int i = 0; i < flightCounter; i++)
+	{
+		for (int j = 0; j < clientCounter; j++)
+		{
+			for (int k = 0; k < flight[i].passengers; k++)
+			{
+				if (client[j].bp.ticketNum == flight[i].passengersTickets[k])
+				{
+					cout << "\nName: " << client[j].name.first << " " << client[j].name.middle << " " << client[j].name.last;
+					cout << "\nAge: " << client[j].age;
+					cout << "\nEGN: " << client[j].egn;
+					cout << "\nBoard pass\n";
+					cout << "Flight Num: " << client[j].bp.flightNum;
+					cout << "\nTaken Seats: " << client[j].bp.takenSeats;
+					cout << "\n\n";
+				}
+			}
+		}
+	}
+	_getch();
 }
