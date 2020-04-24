@@ -10,17 +10,19 @@ struct NAME {
 };
 
 struct BOARD_PASS {
-	char flightNum[6]; //TO DO!!! make a flight num check if over 6 symbols!
+	char flightNum[6];
 	int takenSeats;
+	int oldSeats;
+	float ticketPrice = 0.00;
 	int ticketNum;
 	bool checkedIn = false;
 };
 
 struct CLIENT {
 	struct NAME name;
-	string married;
 	int age;
 	char egn[11];
+	string married;
 	struct BOARD_PASS bp;
 };
 
@@ -28,6 +30,7 @@ struct PLANES {
 	string manufacturer;
 	string modelName;
 	int maxSeats;
+	int oldMaxSeats = 0;
 };
 
 struct TAKE_OFF_DATE {
@@ -48,13 +51,13 @@ struct FLIGHT {
 };
 
 // Functions
-void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT client[], int& clientCounter); //mainMenu
+void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT client[], int& clientCounter, int& editIndex, int& fId); //mainMenu
 
 void registerFlight(FLIGHT flight[], int& flightCounter); //register Flight
 
 void informationFlight(FLIGHT flight[], int& flightCounter); //information Flight
 
-void editFlight(FLIGHT flight[], int& flightCounter); //Edit Flight 
+int editFlight(FLIGHT flight[], int& flightCounter); //Edit Flight 
 
 void removeFlight(FLIGHT flight[], int& flightCounter); //Remove Flight 
 
@@ -64,7 +67,7 @@ void informationClient(CLIENT client[], int& clientCounter); //information Clien
 
 void removeClient(CLIENT client[], int& clientCounter); //Remove Client
 
-void editClient(CLIENT client[], int& clientCounter); //Edit Client 
+int editClient(CLIENT client[], int& clientCounter); //Edit Client 
 
 void checkMonth(FLIGHT flight[], int i); //Checks if the month is possible
 
@@ -82,6 +85,12 @@ void checkFlightNumFlight(FLIGHT flight[], int flightCounter); //checks for flig
 
 void checkMarried(CLIENT client[], int clientCounter); //checks if client is married
 
+void checkSeats(FLIGHT flight[], int flightCounter, CLIENT client[], int clientCounter, int& editIndex); //checks the client seats
+
+void checkOverbooked(FLIGHT flight[], int flightCounter, int fId); //checks if flight is overbooked
+
+void checkEmptySeatsAfterMaxChange(FLIGHT flight[], int fId); //updates empty seats after the max is changed
+
 // Main
 int main()
 {
@@ -89,15 +98,17 @@ int main()
 	struct CLIENT client[20];
 	int flightCounter = 0;
 	struct FLIGHT flight[20];
+	int editIndex = 0;
+	int fId = 0;
 	bool inMainLoop = true;
 	while (inMainLoop)
 	{
-		mainMenu(inMainLoop, flight, flightCounter, client, clientCounter);
+		mainMenu(inMainLoop, flight, flightCounter, client, clientCounter, editIndex, fId);
 	}
 }
 
 // Functions
-void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT client[], int& clientCounter)
+void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT client[], int& clientCounter, int& editIndex, int& fId)
 {
 	system("CLS");
 	cout << "===========| Main Menu |===========\n";
@@ -122,12 +133,14 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 
 	switch (_getch())
 	{
-	case 27: //0 -> quit app
+	case 27: //Esc -> quit app
 		inMainLoop = false;
 		break;
 	case 49: //1 -> register a new flight
 		registerFlight(flight, flightCounter); //function
 		connectFlightClient(flight, flightCounter, client, clientCounter);
+		fId = flightCounter - 1;
+		checkOverbooked(flight, flightCounter, fId);
 		break;
 	case 50: //2 -> see flight information
 		informationFlight(flight, flightCounter);//function
@@ -139,7 +152,8 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 	case 52: //4 -> register a new client
 		registerClient(client, clientCounter);//function
 		connectFlightClient(flight, flightCounter, client, clientCounter);
-		//function to check seats!
+		editIndex = clientCounter - 1;
+		checkSeats(flight, flightCounter, client, clientCounter, editIndex);
 		break;
 	case 53: //5 -> see client information
 		informationClient(client, clientCounter);//function
@@ -148,10 +162,13 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 		removeClient(client, clientCounter);//function
 		break;
 	case 55: //7 -> edit client
-		editClient(client, clientCounter);//function
+		editIndex = editClient(client, clientCounter);//function
+		checkSeats(flight, flightCounter, client, clientCounter, editIndex);
 		break;
 	case 56: //8 -> edit Flight
-		editFlight(flight, flightCounter);//function
+		fId = editFlight(flight, flightCounter);//function
+		checkEmptySeatsAfterMaxChange(flight, fId);
+		checkOverbooked(flight, flightCounter, fId);
 		break;
 	default:
 		cout << "Error...";
@@ -181,7 +198,12 @@ void registerClient(CLIENT client[], int& clientCounter) //register client Funct
 	cin >> client[clientCounter].bp.flightNum;
 	checkFlightNumClient(client, clientCounter);
 	cout << "Taken Seats: ";
+	client[clientCounter].bp.oldSeats = 0;
 	cin >> client[clientCounter].bp.takenSeats;
+
+
+
+
 	client[clientCounter].bp.ticketNum = clientCounter;
 
 	clientCounter++;
@@ -250,23 +272,20 @@ removeStart:
 	_getch();
 }
 
-void editClient(CLIENT client[], int& clientCounter)
+int editClient(CLIENT client[], int& clientCounter)
 {
 	system("CLS");
 	if (clientCounter == 0)
 	{
 		cout << "No Clients present in the system...";
 		_getch();
+		return -1;
 	}
 	else
 	{
 	editClientStart:
 		informationClient(client, clientCounter);
-		system("CLS");
 		int index = 0;
-		struct CLIENT temp;
-		cout << "===========| Edit Client Menu |===========\n";
-
 		cout << "\nChoose ID: ";
 		cin >> index;
 		if (index >= clientCounter or index < 0)
@@ -275,13 +294,38 @@ void editClient(CLIENT client[], int& clientCounter)
 			_getch();
 			goto editClientStart;
 		}
+		system("CLS");
+
+		struct CLIENT temp;
 		temp = client[index];
 
+		cout << "===========| Edit Client Menu |===========\n";
+
+		for (int i = 0; i < clientCounter; i++)
+		{
+			if (i == index)
+			{
+			cout << "\nID:" << index;
+			cout << "\nName: " << client[i].name.first << " " << client[i].name.middle << " " << client[i].name.last;
+			cout << "\nAge: " << client[i].age;
+			cout << "\nEGN: " << client[i].egn;
+			cout << "\nMarried: " << client[i].married;
+			cout << "\nBoard pass\n";
+			cout << "Flight Num: " << client[i].bp.flightNum;
+			cout << "\nTaken Seats: " << client[i].bp.takenSeats;
+			cout << "\n\n";
+			}
+		}
+
 		cout << "\nEsc. Back to the Main Menu...\n";
+
+		cout << "\n/--- Edit Personal Information ---\\\n";
 		cout << "\n1.Edit Name...\n";
 		cout << "2.Edit age...\n";
 		cout << "3.Edit EGN...\n";
 		cout << "4.Edit Married Status...\n";
+
+		cout << "\n/--- Edit Board Pass ---\\\n";
 		cout << "5.Edit flight num...\n";
 		cout << "6.Edit taken seats...\n\n";
 
@@ -329,12 +373,16 @@ void editClient(CLIENT client[], int& clientCounter)
 		cout << "\nDo you want to save the changes made?...\n";
 		cout << "1.Save changes\n";
 		cout << "2.Don't save changes\n";
-		switch (_getch()) // save or cancel the new name
+		int dec;
+		cin >> dec;
+		switch (dec) // save or cancel the new name
 		{
-		case 49: //1 -> save new name
+		case 1: //1 -> save new
 
+			temp.bp.oldSeats = client[index].bp.takenSeats;
 			temp.married = client[index].married;
 			swap(temp.bp.flightNum, client[index].bp.flightNum);
+
 			client[index] = temp;
 			/*
 			client[index].name.first = temp.name.first; //change old name with new name
@@ -350,7 +398,7 @@ void editClient(CLIENT client[], int& clientCounter)
 			cout << "\nChanges have been saved.\n";
 			_getch();
 			break;
-		case 50: //2 -> Cancel the new name
+		case 2: //2 -> Cancel the new
 			cout << "\nChanges are discarded.\n";
 			client[index].married = temp.married;
 			swap(temp.bp.flightNum, client[index].bp.flightNum);
@@ -369,7 +417,10 @@ void editClient(CLIENT client[], int& clientCounter)
 		cout << "\nTaken Seats: " << client[index].bp.takenSeats << "\n";
 		cout << "\n";
 		_getch();
+		
+		return index;
 	}
+
 }
 
 void checkMonth(FLIGHT flight[], int i) //Checks if the month is possible
@@ -426,6 +477,7 @@ void registerFlight(FLIGHT flight[], int& flightCounter)
 	cout << "\n-  -Manufacturer: "; cin >> flight[flightCounter].plane.manufacturer;
 	cout << "-  -Model name: "; cin >> flight[flightCounter].plane.modelName;
 	cout << "-  -Max seats: "; cin >> flight[flightCounter].plane.maxSeats;
+	flight[flightCounter].plane.oldMaxSeats = 0;
 	flight[flightCounter].emptySeats = flight[flightCounter].plane.maxSeats;
 	flightCounter++;
 }
@@ -446,12 +498,16 @@ void informationFlight(FLIGHT flight[], int& flightCounter)
 			cout << "\nCountry/City of origin: " << flight[i].origin;
 			cout << "\nDestination: " << flight[i].destination;
 			cout << "\nTravel Distance(km): " << flight[i].distanceToDestination;
-			cout << "\nTake off date(day.month): " << flight[i].dateOfTakeOff.day << "."; if (flight[i].dateOfTakeOff.month < 10) cout << "0"; cout << flight[i].dateOfTakeOff.month;
+			cout << "\nTake off date(day.month): ";
+			if (flight[i].dateOfTakeOff.day < 10) cout << "0";
+			cout << flight[i].dateOfTakeOff.day << "."; 
+			if (flight[i].dateOfTakeOff.month < 10) cout << "0"; 
+			cout << flight[i].dateOfTakeOff.month;
 			cout << "\nPlane: ";
 			cout << "\n-  -Manufacturer: " << flight[i].plane.manufacturer;
 			cout << "\n-  -Model name: " << flight[i].plane.modelName;
 			cout << "\n-  -Max seats: " << flight[i].plane.maxSeats;
-			if (flight[i].emptySeats < 0) cout << "\nOverbooked!";
+			if (flight[i].overbooked) cout << "\nNo empty seats-\tOverbooked!";
 			else cout << "\nEmpty seats: " << flight[i].emptySeats;
 			cout << "\n\n";
 
@@ -484,7 +540,7 @@ removeStart:
 		cout << "\n-  -Manufacturer: " << flight[index].plane.manufacturer;
 		cout << "\n-  -Model name: " << flight[index].plane.modelName;
 		cout << "\n-  -Max Seats: " << flight[index].plane.maxSeats;
-		if (flight[index].emptySeats < 0) cout << "\nOverbooked!";
+		if (flight[index].overbooked) cout << "\nNo empty seats-\tOverbooked!";
 		else cout << "\nEmpty seats: " << flight[index].emptySeats;
 
 
@@ -498,32 +554,59 @@ removeStart:
 	_getch();
 }
 
-void editFlight(FLIGHT flight[], int& flightCounter)
+int editFlight(FLIGHT flight[], int& flightCounter)
 {
 	system("CLS");
 	if (flightCounter == 0)
 	{
 		cout << "No Flights present in the system...";
 		_getch();
+		return -1;
 	}
 	else
 	{
 	editFlightStart:
 		informationFlight(flight, flightCounter);
-		system("CLS");
-		int index;
-		struct FLIGHT temp;
-		cout << "===========| Edit Flight Menu |===========\n";
 
+		int index;
 		cout << "\nChoose ID: ";
 		cin >> index;
+		system("CLS");
 		if (index >= flightCounter or index < 0)
 		{
 			cout << "\nError...\n";
 			_getch();
 			goto editFlightStart;
 		}
+
+		struct FLIGHT temp;
 		temp = flight[index];
+		
+		cout << "===========| Edit Flight Menu |===========\n";
+
+		for (int i = 0; i < flightCounter; i++)
+		{
+			if (i == index)
+			{
+				cout << "\nID:" << index;
+				cout << "\nFlight Number(6 symbols): " << flight[i].flightNum;
+				cout << "\nCountry/City of origin: " << flight[i].origin;
+				cout << "\nDestination: " << flight[i].destination;
+				cout << "\nTravel Distance(km): " << flight[i].distanceToDestination;
+				cout << "\nTake off date(day.month): ";
+				if (flight[i].dateOfTakeOff.day < 10) cout << "0";
+				cout << flight[i].dateOfTakeOff.day << ".";
+				if (flight[i].dateOfTakeOff.month < 10) cout << "0";
+				cout << flight[i].dateOfTakeOff.month;
+				cout << "\nPlane: ";
+				cout << "\n-  -Manufacturer: " << flight[i].plane.manufacturer;
+				cout << "\n-  -Model name: " << flight[i].plane.modelName;
+				cout << "\n-  -Max seats: " << flight[i].plane.maxSeats;
+				if (flight[i].overbooked) cout << "\nNo empty seats-\tOverbooked!";
+				else cout << "\nEmpty seats: " << flight[i].emptySeats;
+				cout << "\n\n";
+			}
+		}
 
 		cout << "\nEsc. Back to the Main Menu...\n";
 
@@ -592,12 +675,15 @@ void editFlight(FLIGHT flight[], int& flightCounter)
 		cout << "\nDo you want to save the changes made?...\n";
 		cout << "1.Save changes\n";
 		cout << "2.Don't save changes\n";
-		switch (_getch()) // save or cancel the new name
+		int dec;
+		cin >> dec;
+		switch (dec) // save or cancel the new
 		{
-		case 49: //1 -> save new name
+		case 1: //1 -> save new
 
 
 			cout << "\nChanges have been saved.\n";
+			temp.plane.oldMaxSeats = flight[index].plane.maxSeats;
 			flight[index] = temp;
 			for (int i = 0; i < 6; i++)
 			{
@@ -607,7 +693,7 @@ void editFlight(FLIGHT flight[], int& flightCounter)
 			temp.dateOfTakeOff.month = flight[index].dateOfTakeOff.month;
 			_getch();
 			break;
-		case 50: //2 -> Cancel the new name
+		case 2: //2 -> Cancel the new
 			cout << "\nChanges are discarded.\n";
 			for (int i = 0; i < 6; i++)
 			{
@@ -618,6 +704,11 @@ void editFlight(FLIGHT flight[], int& flightCounter)
 			_getch();
 			break;
 		}
+
+		if (temp.emptySeats < 0)
+			temp.overbooked = true;
+		else
+			temp.overbooked = false;
 
 		cout << "Flight Number(6 symbols): " << temp.flightNum;
 		cout << "\nCountry/City of origin: " << temp.origin;
@@ -631,6 +722,7 @@ void editFlight(FLIGHT flight[], int& flightCounter)
 		cout << "\nEmpty seats: " << temp.emptySeats;
 		cout << "\n\n";
 		_getch();
+		return index;
 	}
 }
 
@@ -652,11 +744,6 @@ void connectFlightClient(FLIGHT flight[], int flightCounter, CLIENT client[], in
 				}
 				if (check == true)
 				{
-					flight[i].emptySeats -= client[j].bp.takenSeats;
-					if (flight[i].emptySeats < 0)
-					{
-						flight[i].overbooked = true;
-					}
 					flight[i].passengersTickets[flight[i].passengers] = client[j].bp.ticketNum;
 					flight[i].passengers++;
 					client[j].bp.checkedIn = true;
@@ -684,12 +771,16 @@ void informationPassenger(FLIGHT flight[], int flightCounter, CLIENT client[], i
 		cout << "\nCountry/City of origin: " << flight[i].origin;
 		cout << "\nDestination: " << flight[i].destination;
 		cout << "\nTravel Distance(km): " << flight[i].distanceToDestination;
-		cout << "\nTake off date(day.month): " << flight[i].dateOfTakeOff.day << "."; if (flight[i].dateOfTakeOff.month < 10) cout << "0"; cout << flight[i].dateOfTakeOff.month;
+		cout << "\nTake off date(day.month): ";
+		if (flight[i].dateOfTakeOff.day < 10) cout << "0";
+		cout << flight[i].dateOfTakeOff.day << ".";
+		if (flight[i].dateOfTakeOff.month < 10) cout << "0";
+		cout << flight[i].dateOfTakeOff.month;
 		cout << "\nPlane: ";
 		cout << "\n-  -Manufacturer: " << flight[i].plane.manufacturer;
 		cout << "\n-  -Model name: " << flight[i].plane.modelName;
 		cout << "\n-  -Max seats: " << flight[i].plane.maxSeats;
-		if (flight[i].emptySeats < 0) cout << "\nOverbooked!";
+		if (flight[i].emptySeats < 0) cout << "\nNo empty seats-\tOverbooked!";
 		else cout << "\nEmpty seats: " << flight[i].emptySeats;
 		cout << "\n\n";
 		cout << "\nPassengers: ";
@@ -775,5 +866,62 @@ void checkFlightNumClient(CLIENT client[], int clientCounter)
 		cout << "\nInput not possible...\tFlight Num(6-symbols): ";
 		cin >> client[clientCounter].bp.flightNum;
 		checkFlightNumClient(client, clientCounter);
+	}
+}
+
+void checkSeats(FLIGHT flight[], int flightCounter, CLIENT client[], int clientCounter,int& editIndex)
+{
+	if (editIndex >= 0)
+	{
+		int fId = -1;
+		for (int i = 0; i < flightCounter; i++)
+		{
+			if (flight[i].passengers == 0)
+			{
+				continue;
+			}
+
+			bool check = true;
+			for (int j = 0; j < 6; j++)
+			{
+				if (int(client[editIndex].bp.flightNum[j]) != int(flight[i].flightNum[j]))
+				{
+					check = false;
+				}
+			}
+			if (check == true)
+			{
+				fId = i;
+				break;
+			}
+		}
+
+		if (fId >= 0)
+		{
+			flight[fId].emptySeats += client[editIndex].bp.oldSeats;
+			flight[fId].emptySeats -= client[editIndex].bp.takenSeats;
+		}
+		
+		checkOverbooked(flight, flightCounter, fId);
+	}
+}
+
+void checkOverbooked(FLIGHT flight[], int flightCounter, int fId)
+{
+	if (flight[fId].emptySeats < 0)
+	{
+		flight[fId].overbooked = true;
+	}
+	else
+	{
+		flight[fId].overbooked = false;
+	}
+}
+
+void checkEmptySeatsAfterMaxChange(FLIGHT flight[], int fId)
+{
+	if (fId >= 0)
+	{
+		flight[fId].emptySeats += (flight[fId].plane.maxSeats - flight[fId].plane.oldMaxSeats);
 	}
 }
