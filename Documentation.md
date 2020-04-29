@@ -146,6 +146,48 @@ int main
 			└── checkOverbooked
 ```
 ---
+```
+ mainMenu -> Main Menu.
+
+ registerFlight -> Register a Flight
+
+ informationFlight -> Shows Flight information
+
+ editFlight -> Edit a Flight 
+
+ removeFlight -> Remove a Flight 
+
+ registerClient -> Register a Client
+
+ informationClient -> Show Client information
+
+ removeClient -> Remove a Client
+
+ editClient -> Edit a Client 
+
+ checkMonth -> Checks if the month is possible
+
+ checkDay -> Checks if the day is possible
+
+ connectFlightClient -> Connects Flights and Clients
+
+ informationPassenger -> Show passengers-clients information
+
+ checkFlightNum -> Checks for flight num duplicates
+
+ checkFlightNumClient -> Checks for flight num len for Clients
+
+ checkFlightNumFlight -> Checks for flight num len for Flights
+
+ checkMarried -> Checks if a client is married
+
+ checkSeats -> Checks the client's seats
+
+ checkOverbooked -> Checks if a flight is overbooked
+
+ checkEmptySeatsAfterMaxChange -> Updates empty seats after the max is changed
+```
+---
 
 Boris worked on the Client functions and the deleting functions
 
