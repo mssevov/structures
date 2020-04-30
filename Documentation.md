@@ -41,7 +41,7 @@ We have 2 main structures: Clients and Flights. And 4 substructures.
 	├── Name
 	└── Board Pass
 ```
-
+---
 ```C++
 struct NAME {
 	string first, middle, last;
