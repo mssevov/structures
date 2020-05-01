@@ -470,7 +470,7 @@ void registerFlight(FLIGHT flight[], int& flightCounter)
 	cout << "Country/City of origin: "; cin >> flight[flightCounter].origin;
 	cout << "Destination: "; cin >> flight[flightCounter].destination;
 	cout << "Travel Distance(km): "; cin >> flight[flightCounter].distanceToDestination;
-	cout << "Take off date(26.8): "; cin >> flight[flightCounter].dateOfTakeOff.day >> flight[flightCounter].dateOfTakeOff.month;
+	cout << "Take off date(26 8): "; cin >> flight[flightCounter].dateOfTakeOff.day >> flight[flightCounter].dateOfTakeOff.month;
 	checkMonth(flight, flightCounter);
 	checkDay(flight, flightCounter);
 	cout << "Plane: ";
@@ -666,7 +666,7 @@ int editFlight(FLIGHT flight[], int& flightCounter)
 			break;
 		case 56: //8 -> edit date
 			cout << "\nOld take off date(day.month): " << flight[index].dateOfTakeOff.day << "."; if (flight[index].dateOfTakeOff.month < 10) cout << "0"; cout << flight[index].dateOfTakeOff.month;
-			cout << "New take off date(26.8): "; cin >> flight[index].dateOfTakeOff.day >> flight[index].dateOfTakeOff.month;
+			cout << "New take off date(26 8): "; cin >> flight[index].dateOfTakeOff.day >> flight[index].dateOfTakeOff.month;
 			checkMonth(flight, index);
 			checkDay(flight, index);
 			break;
