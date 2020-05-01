@@ -1,9 +1,11 @@
-# Documentation for structures school project :octocat:
+# Documentation for structures school project
 
 1. Who we are
 2. What the is project about
 3. How we made the project
 4. How the code works
+
+### Read the ReadMe for instructions on how to use the program
 
 ## 1. Who we are
 
@@ -23,7 +25,7 @@ We used Visual Studio 2019 and Github to make and work on the project. It was ma
 ## 4. How the code works
 
 We used only 2 libraries and 1 header file
-```c++
+```C++
 #include <iostream>
 #include <string>
 #include <conio.h>
