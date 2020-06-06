@@ -136,7 +136,7 @@ void mainMenu(bool& inMainLoop, FLIGHT flight[], int& flightCounter, CLIENT clie
 	case 27: //Esc -> quit app
 		inMainLoop = false;
 		break;
-	case 49: //1 -> register a new flight
+	case '1': //1 -> register a new flight
 		registerFlight(flight, flightCounter); //function
 		connectFlightClient(flight, flightCounter, client, clientCounter);
 		fId = flightCounter - 1;
@@ -384,6 +384,7 @@ int editClient(CLIENT client[], int& clientCounter)
 			swap(temp.bp.flightNum, client[index].bp.flightNum);
 
 			client[index] = temp;
+			
 			/*
 			client[index].name.first = temp.name.first; //change old name with new name
 			client[index].name.middle = temp.name.middle;
